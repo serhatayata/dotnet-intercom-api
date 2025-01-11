@@ -34,9 +34,6 @@ public class AdminModel
     [JsonProperty("avatar")]
     public string Avatar { get; set; }
 
-    [JsonProperty("request_id")]
-    public string RequestId { get; set; }
-
-    [JsonProperty("errors")]
-    public List<ErrorModel> Errors { get; set; }
+    [JsonProperty("team_priority_level")]
+    public TeamPriorityLevel TeamPriorityLevel { get; set; }
 }
