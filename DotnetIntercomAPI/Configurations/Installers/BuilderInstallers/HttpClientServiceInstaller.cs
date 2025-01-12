@@ -1,4 +1,5 @@
-﻿using DotnetIntercomAPI.Attributes;
+﻿using System.Net.Http.Headers;
+using DotnetIntercomAPI.Attributes;
 using DotnetIntercomAPI.Models;
 
 namespace DotnetIntercomAPI.Configurations.Installers.BuilderInstallers;
@@ -10,11 +11,12 @@ public class HttpClientServiceInstaller : IBuilderInstaller
     {
         builder.Services.AddHttpClient("intercom", c =>
         {
-            var intercomOptions = builder.Configuration.GetValue<IntercomOptions>("IntercomOptions");
+            var intercomOptions = builder.Configuration.GetSection("IntercomOptions").Get<IntercomOptions>();
 
             c.BaseAddress = new Uri(intercomOptions.BaseUrl);
-            c.DefaultRequestHeaders.Add("Authorization", intercomOptions.AccessToken);
+            c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", intercomOptions.AccessToken);
             c.DefaultRequestHeaders.Add("Intercom-Version", intercomOptions.Version);
+            c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         });
 
         return Task.CompletedTask;

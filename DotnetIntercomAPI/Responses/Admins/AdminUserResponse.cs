@@ -29,6 +29,9 @@ public class AdminUserResponse : BaseResponse
     [JsonProperty("team_ids")]
     public List<int> TeamIds { get; set; }
 
+    [JsonProperty("avatar")]
+    public IntercomAvatarModel Avatar { get; set; }
+
     [JsonProperty("team_priority_level")]
     public TeamPriorityLevel TeamPriorityLevel { get; set; }
 }
