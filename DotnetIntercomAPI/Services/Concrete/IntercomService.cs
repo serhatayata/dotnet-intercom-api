@@ -1,6 +1,9 @@
 ﻿using System.Text;
+using DotnetIntercomAPI.Models.Contacts;
 using DotnetIntercomAPI.Requests.Admins;
 using DotnetIntercomAPI.Responses.Admins;
+using DotnetIntercomAPI.Responses.Companies;
+using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
 
@@ -145,7 +148,84 @@ public class IntercomService : IIntercomService
         }
     }
     #endregion
+    #region Companies
+    /// <summary>
+    /// You can list companies.
+    /// </summary>
+    /// <param name="order">ordering by asc or desc</param>
+    /// <param name="page">page size</param>
+    /// <param name="perPage">items per page</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="CompanyListResponse"/></returns>
+    public async Task<CompanyListResponse> ListAllCompanies(
+    string order = "asc",
+    int page = 1,
+    int perPage = 1,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<object, CompanyListResponse>(endpoint: $"companies/list?order={order}&page={page}&per_page={perPage}", 
+                                                                data: null,
+                                                                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+    #endregion
+    #region Contacts
 
+    /// <summary>
+    /// You can fetch a list of all contacts that belong to a company.
+    /// </summary>
+    /// <param name="id">The unique identifier for the company which is given by Intercom</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="ContactListResponse"/></returns>
+    public async Task<ContactListResponse> ListAttachedContacts(
+    string id,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<ContactListResponse>(endpoint: $"companies/{id}/contacts", 
+                                                       parameters: null, 
+                                                       cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can fetch the details of a single contact.
+    /// </summary>
+    /// <param name="id">id</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="ContactListResponse"/></returns>
+    public async Task<ContactResponse> GetContact(
+    string id,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<ContactResponse>(endpoint: $"contacts/{id}", 
+                                                   parameters: null, 
+                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+
+    #endregion
 
     #region Private Methods
     private async Task<R> GetAsync<R>(
