@@ -1,6 +1,9 @@
 ﻿using System.Text;
+using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Models.Contacts;
+using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
+using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -202,6 +205,30 @@ public class IntercomService : IIntercomService
     }
 
     /// <summary>
+    /// You can fetch a list of all contacts (ie. users or leads) in your workspace.
+    /// </summary>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="ContactListResponse"/></returns>
+    public async Task<ContactListResponse> ListAllContacts(
+    PagesRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var parameters = HttpHelper.ToQueryStringAsDictionary<PagesRequest>(request);
+
+            return await GetAsync<ContactListResponse>(endpoint: "contacts", 
+                                                       parameters: parameters, 
+                                                       cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
     /// You can fetch the details of a single contact.
     /// </summary>
     /// <param name="id">id</param>
@@ -224,6 +251,33 @@ public class IntercomService : IIntercomService
         }
     }
 
+    public async Task<ContactCreateOrUpdateResponse> CreateOrUpdateContact(
+    string id,
+    ContactCreateOrUpdateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(id))
+                return await PostAsync<ContactCreateOrUpdateRequest, ContactCreateOrUpdateResponse>(endpoint: "contacts", 
+                                                                                              data: model, 
+                                                                                              cancellationToken: cancellationToken);
+            else
+                return await PostAsync<ContactCreateOrUpdateRequest, ContactCreateOrUpdateResponse>(endpoint: $"contacts/{id}", 
+                                                                                              data: model, 
+                                                                                              cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }    
+    }
+
+    public async Task<ContactDeleteResponse> DeleteContact(string id, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 
     #endregion
 

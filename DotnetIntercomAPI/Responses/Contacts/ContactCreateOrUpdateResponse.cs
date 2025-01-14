@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using DotnetIntercomAPI.Models.Contacts;
+using DotnetIntercomAPI.Models;
+using Newtonsoft.Json;
 
-namespace DotnetIntercomAPI.Models.Contacts;
+namespace DotnetIntercomAPI.Responses.Contacts;
 
-public class ContactModel
+public class ContactCreateOrUpdateResponse : BaseResponse
 {
     [JsonProperty("type")]
     public string Type { get; set; }
@@ -101,7 +103,7 @@ public class ContactModel
     public string AndroidSdkVersion { get; set; }
 
     [JsonProperty("android_last_seen_at")]
-    public DateTime? AndroidLastSeenAt { get; set; }
+    public int? AndroidLastSeenAt { get; set; }
 
     [JsonProperty("ios_app_name")]
     public string IosAppName { get; set; }
@@ -141,4 +143,22 @@ public class ContactModel
 
     [JsonProperty("social_profiles")]
     public ContactSocialProfile SocialProfiles { get; set; }
+
+    [JsonProperty("utm_campaign")]
+    public string UtmCampaign { get; set; }
+
+    [JsonProperty("utm_content")]
+    public string UtmContent { get; set; }
+
+    [JsonProperty("utm_medium")]
+    public string UtmMedium { get; set; }
+
+    [JsonProperty("utm_source")]
+    public string UtmSource { get; set; }
+
+    [JsonProperty("utm_term")]
+    public string UtmTerm { get; set; }
+
+    [JsonProperty("referrer")]
+    public string Referrer { get; set; }
 }

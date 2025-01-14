@@ -1,10 +1,12 @@
-﻿using DotnetIntercomAPI.Requests.Admins;
+﻿using System.Threading;
+using DotnetIntercomAPI.Requests;
+using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetIntercomAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/intercom")]
 [ApiController]
 public class IntercomController : ControllerBase
 {
@@ -65,12 +67,10 @@ public class IntercomController : ControllerBase
     #region Companies
     [HttpGet("list-all-companies")]
     public async Task<IActionResult> ListAllCompanies(
-    string order = "asc",
-    int page = 1,
-    int perPage = 1,
+    [FromQuery] PagesRequest request,
     CancellationToken cancellationToken = default)
     {
-        var response = await _intercomService.ListAllCompanies(order, page, perPage, cancellationToken);
+        var response = await _intercomService.ListAllCompanies(request, cancellationToken);
         return Ok(response);
     }
     #endregion
@@ -81,6 +81,43 @@ public class IntercomController : ControllerBase
     CancellationToken cancellationToken = default)
     {
         var response = await _intercomService.GetContact(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("list-contacts")]
+    public async Task<IActionResult> ListContacts(
+    [FromQuery] PagesRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.ListAllContacts(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("create-contact")]
+    public async Task<IActionResult> CreateContact(
+    [FromBody] ContactCreateOrUpdateRequest model,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.CreateOrUpdateContact(string.Empty, model, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPut("update-contact/{id}")]
+    public async Task<IActionResult> UpdateContact(
+    string id,
+    [FromBody] ContactCreateOrUpdateRequest model,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.CreateOrUpdateContact(id, model, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("delete-contact/{id}")]
+    public async Task<IActionResult> DeleteContact(
+    string id,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.DeleteContact(id, cancellationToken);
         return Ok(response);
     }
     #endregion

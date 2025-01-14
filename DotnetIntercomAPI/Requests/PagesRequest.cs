@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using DotnetIntercomAPI.Models;
+using Newtonsoft.Json;
 
-namespace DotnetIntercomAPI.Models;
+namespace DotnetIntercomAPI.Requests;
 
-public class PagesModel
+public class PagesRequest
 {
     [JsonProperty("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
 
     [JsonProperty("next")]
     public NextPageModel? Next { get; set; }
@@ -18,4 +19,7 @@ public class PagesModel
 
     [JsonProperty("total_pages")]
     public int? TotalPages { get; set; }
+
+    [JsonProperty("order")]
+    public string? Order { get; set; }
 }
