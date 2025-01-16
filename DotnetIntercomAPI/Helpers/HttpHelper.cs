@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Web;
+using DotnetIntercomAPI.Extensions;
 using Newtonsoft.Json;
 
 namespace DotnetIntercomAPI.Helpers;
@@ -18,7 +19,7 @@ public static class HttpHelper
         return string.Join("&", properties);
     }
 
-    public static Dictionary<string, string> ToQueryStringAsDictionary<T>(T obj)
+    public static Dictionary<string, string> ToSnakeCaseQueryStringAsDictionary<T>(T obj)
     {
         var dictionary = new Dictionary<string, string>();
 
@@ -28,9 +29,7 @@ public static class HttpHelper
                 .Where(p => p.GetValue(obj, null) != null)  // Filter out null values
                 .Select(p =>
                 {
-                    // Get the JsonProperty attribute, if available
-                    var jsonPropertyAttribute = p.GetCustomAttribute<JsonPropertyAttribute>();
-                    string key = jsonPropertyAttribute?.PropertyName ?? p.Name;  // Use JsonProperty name or fallback to property name
+                    string key = p.Name.ToSnakeCase();
 
                     return new
                     {

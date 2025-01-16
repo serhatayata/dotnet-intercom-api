@@ -16,7 +16,7 @@ public interface IIntercomService
     Task<AdminUserResponse> RetrieveAdmin(string id, CancellationToken cancellationToken = default);
     #endregion
     #region Companies
-    Task<CompanyListResponse> ListAllCompanies(string order = "asc", int page = 1, int perPage = 1, CancellationToken cancellationToken = default);
+    Task<CompanyListResponse> ListAllCompanies(PagesRequest request, CancellationToken cancellationToken = default);
     #endregion
     #region Contacts
     Task<ContactResponse> GetContact(string id, CancellationToken cancellationToken = default);

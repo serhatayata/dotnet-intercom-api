@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using DotnetIntercomAPI.Helpers;
-using DotnetIntercomAPI.Models.Contacts;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
 using DotnetIntercomAPI.Requests.Contacts;
@@ -9,6 +8,7 @@ using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace DotnetIntercomAPI.Services.Concrete;
 
@@ -161,14 +161,13 @@ public class IntercomService : IIntercomService
     /// <param name="cancellationToken">cancellation token</param>
     /// <returns><see cref="CompanyListResponse"/></returns>
     public async Task<CompanyListResponse> ListAllCompanies(
-    string order = "asc",
-    int page = 1,
-    int perPage = 1,
+    PagesRequest request,
     CancellationToken cancellationToken = default)
     {
         try
         {
-            return await PostAsync<object, CompanyListResponse>(endpoint: $"companies/list?order={order}&page={page}&per_page={perPage}", 
+            string url = $"companies/list?order={request.Order}&page={request.Page}&per_page={request.PerPage}";
+            return await PostAsync<object, CompanyListResponse>(endpoint: url, 
                                                                 data: null,
                                                                 cancellationToken: cancellationToken);
         }
@@ -215,7 +214,7 @@ public class IntercomService : IIntercomService
     {
         try
         {
-            var parameters = HttpHelper.ToQueryStringAsDictionary<PagesRequest>(request);
+            var parameters = HttpHelper.ToSnakeCaseQueryStringAsDictionary<PagesRequest>(request);
 
             return await GetAsync<ContactListResponse>(endpoint: "contacts", 
                                                        parameters: parameters, 
@@ -274,10 +273,25 @@ public class IntercomService : IIntercomService
         }    
     }
 
-    public async Task<ContactDeleteResponse> DeleteContact(string id, CancellationToken cancellationToken = default)
+    public async Task<ContactDeleteResponse> DeleteContact(
+    string id, 
+    CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await DeleteAsync<ContactDeleteResponse>(endpoint: $"contacts/{id}", 
+                                                            parameters: null, 
+                                                            cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
     }
+
+    #endregion
+    #region Conversations
 
     #endregion
 
@@ -297,7 +311,7 @@ public class IntercomService : IIntercomService
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<R>(responseString);
+        var result = Deserialize<R>(responseString);
 
         return result;
     }
@@ -307,6 +321,7 @@ public class IntercomService : IIntercomService
     T data,
     CancellationToken cancellationToken = default) 
     where T : class
+    where R : class
     {
         var dataStr = Serialize<T>(data);
         var content = new StringContent(dataStr, Encoding.UTF8, "application/json");
@@ -315,7 +330,7 @@ public class IntercomService : IIntercomService
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<R>(responseString);
+        var result = Deserialize<R>(responseString);
 
         return result;
     }
@@ -325,6 +340,7 @@ public class IntercomService : IIntercomService
     T data, 
     CancellationToken cancellationToken = default) 
     where T : class
+    where R : class
     {
         var dataStr = Serialize<T>(data);
         var content = new StringContent(dataStr, Encoding.UTF8, "application/json");
@@ -333,18 +349,52 @@ public class IntercomService : IIntercomService
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<R>(responseString);
+        var result = Deserialize<R>(responseString);
 
         return result;
     }
 
-    private string Serialize<T>(
-    T data) 
-    where T : class
+    private async Task<R> DeleteAsync<R>(
+    string endpoint, 
+    Dictionary<string, string> parameters = null,
+    CancellationToken cancellationToken = default)
+    {
+        if (parameters != null && parameters.Count > 0)
+        {
+            var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
+            endpoint = $"{endpoint}?{queryString}";
+        }
+
+        var response = await _httpClient.DeleteAsync(endpoint, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        var result = Deserialize<R>(responseString);
+
+        return result;
+    }
+
+    private string Serialize<T>(T data) where T : class
     {
         return JsonConvert.SerializeObject(data, typeof(T), Formatting.None, new JsonSerializerSettings
         {
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            }
+        });
+    }
+
+    private T? Deserialize<T>(string data)
+    {
+        return JsonConvert.DeserializeObject<T>(data, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            }
         });
     }
     #endregion
