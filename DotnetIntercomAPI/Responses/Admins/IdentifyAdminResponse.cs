@@ -10,6 +10,6 @@ public class IdentifyAdminResponse : BaseResponse
     public string Name { get; set; }
     public bool EmailVerified { get; set; }
     public IntercomAppModel App { get; set; }
-    public IntercomAvatarModel Avatar { get; set; }
+    public IntercomAvatar Avatar { get; set; }
     public bool HasInboxSeat { get; set; }
 }

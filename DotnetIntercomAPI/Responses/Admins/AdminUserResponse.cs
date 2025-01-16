@@ -13,6 +13,6 @@ public class AdminUserResponse : BaseResponse
     public bool AwayModeReassign { get; set; }
     public bool HasInboxSeat { get; set; }
     public List<int> TeamIds { get; set; }
-    public IntercomAvatarModel Avatar { get; set; }
+    public IntercomAvatar Avatar { get; set; }
     public TeamPriorityLevel TeamPriorityLevel { get; set; }
 }

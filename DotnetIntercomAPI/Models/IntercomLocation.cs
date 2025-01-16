@@ -1,6 +1,6 @@
 ﻿namespace DotnetIntercomAPI.Models;
 
-public class IntercomLocationModel
+public class IntercomLocation
 {
     public string Type { get; set; }
     public string Country { get; set; }

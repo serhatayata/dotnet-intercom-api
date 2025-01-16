@@ -42,10 +42,10 @@ public class ContactModel
     public string IosSdkVersion { get; set; }
     public int? IosLastSeenAt { get; set; }
     public object CustomAttributes { get; set; }
-    public IntercomAvatarModel Avatar { get; set; }
+    public IntercomAvatar Avatar { get; set; }
     public ContactTag Tags { get; set; }
     public ContactNote Notes { get; set; }
     public ContactCompany Companies { get; set; }
-    public IntercomLocationModel Location { get; set; }
+    public IntercomLocation Location { get; set; }
     public ContactSocialProfile SocialProfiles { get; set; }
 }

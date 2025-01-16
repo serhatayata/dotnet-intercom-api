@@ -1,7 +1,7 @@
 ﻿namespace DotnetIntercomAPI.Models;
 
-public class IntercomAvatarModel
+public class IntercomTeammate
 {
     public string Type { get; set; }
-    public string ImageUrl { get; set; }
+    public string Id { get; set; }
 }
