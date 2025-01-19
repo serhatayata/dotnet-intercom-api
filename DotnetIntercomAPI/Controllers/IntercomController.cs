@@ -1,6 +1,8 @@
-﻿using System.Threading;
+﻿using System.Reflection;
+using System.Threading;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Contacts;
+using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -120,5 +122,69 @@ public class IntercomController : ControllerBase
         var response = await _intercomService.DeleteContact(id, cancellationToken);
         return Ok(response);
     }
+    #endregion
+    #region Conversations
+
+    [HttpPost("add-tag-to-conversation/{conversationId}")]
+    public async Task<IActionResult> AddTagToConversation(
+    string conversationId,
+    [FromBody] ConversationAddTagRequest model,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.AddTagToConversation(conversationId, model, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("remove-tag-from-conversation/{conversationId}/{id}")]
+    public async Task<IActionResult> RemoveTagFromConversation(
+    string conversationId,
+    string id,
+    [FromBody] ConversationRemoveTagRequest model,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RemoveTagFromConversation(conversationId, id, model, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("list-all-conversations")]
+    public async Task<IActionResult> ListAllConversations(
+    [FromQuery] PagesRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.ListAllConversations(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("retrieve-conversation/{id}")]
+    public async Task<IActionResult> RetrieveConversation(
+    string id,
+    string displayAs = "plaintext",
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.RetrieveConversation(id, displayAs, cancellationToken);
+        return Ok(response);
+    }
+
+
+    [HttpPut("conversations/{id}")]
+    public async Task<IActionResult> UpdateConversation(
+    string id,
+    ConversationUpdateRequest model,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.UpdateConversation(id, model, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("conversations/{id}/reply")]
+    public async Task<IActionResult> ReplyConversation(
+    string id,
+    ConversationReplyRequest model,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ReplyConversation(id, model, cancellationToken);
+        return Ok(response);
+    }
+
     #endregion
 }

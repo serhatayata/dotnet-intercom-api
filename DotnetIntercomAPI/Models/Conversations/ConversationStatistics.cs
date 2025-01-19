@@ -8,15 +8,15 @@ public class ConversationStatistics
     public int TimeToFirstClose { get; set; }
     public int TimeToLastClose { get; set; }
     public int MedianTimeToReply { get; set; }
-    public DateTime FirstContactReplyAt { get; set; }
-    public DateTime FirstAssignmentAt { get; set; }
-    public DateTime FirstAdminReplyAt { get; set; }
-    public DateTime FirstCloseAt { get; set; }
-    public DateTime LastAssignmentAt { get; set; }
-    public DateTime LastAssignmentAdminReplyAt { get; set; }
-    public DateTime LastContactReplyAt { get; set; }
-    public DateTime LastAdminReplyAt { get; set; }
-    public DateTime LastCloseAt { get; set; }
+    public int FirstContactReplyAt { get; set; }
+    public int FirstAssignmentAt { get; set; }
+    public int FirstAdminReplyAt { get; set; }
+    public int FirstCloseAt { get; set; }
+    public int LastAssignmentAt { get; set; }
+    public int LastAssignmentAdminReplyAt { get; set; }
+    public int LastContactReplyAt { get; set; }
+    public int LastAdminReplyAt { get; set; }
+    public int LastCloseAt { get; set; }
     public string LastClosedById { get; set; }
     public int CountReopens { get; set; }
     public int CountAssignments { get; set; }

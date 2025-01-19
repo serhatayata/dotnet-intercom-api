@@ -1,10 +1,11 @@
-﻿using DotnetIntercomAPI.Models.Tags;
+﻿using DotnetIntercomAPI.Models;
+using DotnetIntercomAPI.Models.Conversations;
+using DotnetIntercomAPI.Models.Tags;
 
-namespace DotnetIntercomAPI.Models.Conversations;
+namespace DotnetIntercomAPI.Responses.Conversations;
 
-public class ConversationModel
+public class ConversationResponse : BaseResponse
 {
-    public string Type { get; set; }
     public string Id { get; set; }
     public string Title { get; set; }
     public int CreatedAt { get; set; }
@@ -26,7 +27,7 @@ public class ConversationModel
     public ConversationFirstContactReply? FirstContactReply { get; set; }
     public SlaApplied? SlaApplied { get; set; }
     public ConversationStatistics? Statistics { get; set; }
-    public ConversationPartList? ConversationParts { get; set; }
+    public ConversationPart? ConversationParts { get; set; }
     public ConversationLinkedObjectList? LinkedObjects { get; set; }
     public bool AiAgentParticipated { get; set; }
     public IntercomAiAgent? AiAgent { get; set; }
