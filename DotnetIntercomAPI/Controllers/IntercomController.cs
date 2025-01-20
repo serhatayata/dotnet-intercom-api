@@ -3,6 +3,7 @@ using System.Threading;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
+using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -185,6 +186,40 @@ public class IntercomController : ControllerBase
         var response = await _intercomService.ReplyConversation(id, model, cancellationToken);
         return Ok(response);
     }
+
+    #endregion
+    #region DataAttributes
+
+    [HttpGet("list-all-data-attributes")]
+    public async Task<IActionResult> ListAllDataAttributes(
+    [FromQuery] DataAttributeListRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.ListAllDataAttributes(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("create-data-attribute")]
+    public async Task<IActionResult> CreateDataAttribute(
+    [FromBody] DataAttributeCreateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.CreateDataAttribute(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPut("update-data-attribute/{id}")]
+    public async Task<IActionResult> UpdateDataAttribute(
+    int id,
+    [FromBody] DataAttributeUpdateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.UpdateDataAttribute(id, request, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region DataEvents
 
     #endregion
 }

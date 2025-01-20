@@ -1,10 +1,12 @@
 ﻿using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
+using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Responses.Conversations;
+using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.Tags;
 
 namespace DotnetIntercomAPI.Services.Abstract;
@@ -36,5 +38,10 @@ public interface IIntercomService
     Task<ConversationResponse> RetrieveConversation(string id, string displayAs = "plaintext", CancellationToken cancellationToken = default);
     Task<ConversationResponse> UpdateConversation(string id, ConversationUpdateRequest model, CancellationToken cancellationToken);
     Task<ConversationResponse> ReplyConversation(string id, ConversationReplyRequest model, CancellationToken cancellationToken);
+    #endregion
+    #region DataAttributes
+    Task<DataAttributeListResponse> ListAllDataAttributes(DataAttributeListRequest request, CancellationToken cancellationToken = default);
+    Task<DataAttributeResponse> CreateDataAttribute(DataAttributeCreateRequest model, CancellationToken cancellationToken = default);
+    Task<DataAttributeResponse> UpdateDataAttribute(int id, DataAttributeUpdateRequest model, CancellationToken cancellationToken = default);
     #endregion
 }

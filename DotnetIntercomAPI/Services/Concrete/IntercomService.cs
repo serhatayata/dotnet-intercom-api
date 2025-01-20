@@ -1,18 +1,20 @@
 ﻿using System.Text;
-using System.Threading;
 using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
+using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Responses.Conversations;
+using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.Tags;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotnetIntercomAPI.Services.Concrete;
 
@@ -468,6 +470,8 @@ public class IntercomService : IIntercomService
 
     /// <summary>
     /// You can reply to a conversation with a message from an admin or on behalf of a contact, or with a note for admins.
+    /// There are 3 types of contact reply : IntercomUserId, Email and UserId
+    /// There are 1 type of admin reply : AdminId
     /// </summary>
     /// <param name="id">id of the conversation</param>
     /// <param name="model">request model</param>
@@ -493,7 +497,86 @@ public class IntercomService : IIntercomService
     }
 
     #endregion
+    #region DataAttributes
 
+    /// <summary>
+    /// You can fetch a list of all data attributes belonging to a workspace for contacts, companies or conversations.
+    /// </summary>
+    /// <param name="request">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="DataAttributeListResponse"/></returns>
+    public async Task<DataAttributeListResponse> ListAllDataAttributes(
+    DataAttributeListRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var parameters = HttpHelper.ToSnakeCaseQueryStringAsDictionary<DataAttributeListRequest>(model);
+
+            return await GetAsync<DataAttributeListResponse>(endpoint: "data_attributes", 
+                                                             parameters: parameters, 
+                                                             cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can create a data attributes for a contact or a company.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="DataAttributeResponse"/></returns>
+    public async Task<DataAttributeResponse> CreateDataAttribute(
+    DataAttributeCreateRequest model,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<DataAttributeCreateRequest, DataAttributeResponse>(
+                endpoint: "data_attributes",
+                data: model,
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can update a data attribute.
+    /// Updating the data type is not possible
+    /// It is currently a dangerous action to execute changing a data attribute's type via the API. You will need to update the type via the UI instead.
+    /// </summary>
+    /// <param name="id">id of data attribute</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="DataAttributeResponse"/></returns>
+    public async Task<DataAttributeResponse> UpdateDataAttribute(
+    int id, 
+    DataAttributeUpdateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PutAsync<DataAttributeUpdateRequest, DataAttributeResponse>(
+                endpoint: $"data_attributes/{id}",
+                data: model,
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    #endregion
 
     #region Private Methods
     private async Task<R> GetAsync<R>(
