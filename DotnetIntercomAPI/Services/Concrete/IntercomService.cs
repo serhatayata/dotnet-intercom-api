@@ -1,20 +1,22 @@
 ﻿using System.Text;
+using System.Web;
 using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
+using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Responses.Conversations;
 using DotnetIntercomAPI.Responses.DataAttributes;
+using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Tags;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotnetIntercomAPI.Services.Concrete;
 
@@ -577,6 +579,63 @@ public class IntercomService : IIntercomService
     }
 
     #endregion
+    #region DataEvents
+
+    /// <summary>
+    /// Submit a data event
+    /// Limited the number of tracked metadata keys to 10 per event.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="bool"/></returns>
+    public async Task<bool> SubmitDataEvent(
+    DataEventSubmitRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _ = await PostAsync<DataEventSubmitRequest, object>(endpoint: "events",
+                                                                data: model,
+                                                                cancellationToken: cancellationToken) != null;
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return false;
+        } 
+    }
+
+    /// <summary>
+    /// The events belonging to a customer can be listed by sending a GET request to https://api.intercom.io/events with a user or lead identifier along with a type parameter. 
+    /// The identifier parameter can be one of user_id, email or intercom_user_id. The type parameter value must be user
+    /// Note that you can only 'list' events that are less than 90 days old. 
+    /// Event counts and summaries will still include your events older than 90 days but you cannot 'list' these events individually if they are older than 90 days
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="DataEventListResponse"/></returns>
+    public async Task<DataEventListResponse> ListAllDataEvents(
+    DataEventListRequest model,
+    CancellationToken cancellationToken)
+    {
+        try
+        {
+            var parameters = HttpHelper.ToSnakeCaseQueryStringAsDictionary<DataEventListRequest>(model);
+
+            return await GetAsync<DataEventListResponse>(endpoint: "events",
+                                                         parameters: parameters,
+                                                         cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    #endregion
 
     #region Private Methods
     private async Task<R> GetAsync<R>(
@@ -584,11 +643,7 @@ public class IntercomService : IIntercomService
     Dictionary<string, string> parameters = null,
     CancellationToken cancellationToken = default)
     {
-        if (parameters != null && parameters.Count > 0)
-        {
-            var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
-            endpoint = $"{endpoint}?{queryString}";
-        }
+        endpoint = await GetQueryStringUrl(parameters, endpoint);
 
         var response = await _httpClient.GetAsync(endpoint, cancellationToken);
         response.EnsureSuccessStatusCode();
@@ -642,11 +697,7 @@ public class IntercomService : IIntercomService
     Dictionary<string, string> parameters = null,
     CancellationToken cancellationToken = default)
     {
-        if (parameters != null && parameters.Count > 0)
-        {
-            var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
-            endpoint = $"{endpoint}?{queryString}";
-        }
+        endpoint = await GetQueryStringUrl(parameters, endpoint);
 
         var response = await _httpClient.DeleteAsync(endpoint, cancellationToken);
         response.EnsureSuccessStatusCode();
@@ -679,6 +730,19 @@ public class IntercomService : IIntercomService
                 NamingStrategy = new SnakeCaseNamingStrategy()
             }
         });
+    }
+
+    private async Task<string> GetQueryStringUrl(
+    Dictionary<string, string> parameters,
+    string endpoint)
+    {
+        if (parameters != null && parameters.Count > 0)
+        {
+            var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
+            endpoint = $"{endpoint}?{queryString}";
+        }
+
+        return endpoint;
     }
 
     #endregion

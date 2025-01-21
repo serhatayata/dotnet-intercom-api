@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using System.Threading;
-using DotnetIntercomAPI.Requests;
+﻿using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
+using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +21,9 @@ public class IntercomController : ControllerBase
     }
 
     #region Admins
+    // Admins are teammate accounts that have access to a workspace.
+
+
     [HttpGet("identify-admin")]
     public async Task<IActionResult> IdentifyAdmin(
     string id,
@@ -68,6 +70,9 @@ public class IntercomController : ControllerBase
     }
     #endregion
     #region Companies
+    // Companies allow you to represent organizations using your product.
+    // Each company will have its own description and be associated with contacts. You can fetch, create, update and list companies.
+
     [HttpGet("list-all-companies")]
     public async Task<IActionResult> ListAllCompanies(
     [FromQuery] PagesRequest request,
@@ -78,6 +83,9 @@ public class IntercomController : ControllerBase
     }
     #endregion
     #region Contacts
+    // Contact are the objects that represent your leads and users in Intercom.
+
+
     [HttpGet("get-contact/{id}")]
     public async Task<IActionResult> GetContact(
     string id,
@@ -125,6 +133,9 @@ public class IntercomController : ControllerBase
     }
     #endregion
     #region Conversations
+    // Conversations are how you can communicate with users in Intercom.
+    // They are created when a contact replies to an outbound message, or when one admin directly sends a message to a single contact.
+
 
     [HttpPost("add-tag-to-conversation/{conversationId}")]
     public async Task<IActionResult> AddTagToConversation(
@@ -189,6 +200,10 @@ public class IntercomController : ControllerBase
 
     #endregion
     #region DataAttributes
+    // Data Attributes are metadata used to describe your contact, company and conversation models.
+    // These include standard and custom attributes. By using the data attributes endpoint,
+    // you can get the global list of attributes for your workspace, as well as create and archive custom attributes.
+
 
     [HttpGet("list-all-data-attributes")]
     public async Task<IActionResult> ListAllDataAttributes(
@@ -220,6 +235,26 @@ public class IntercomController : ControllerBase
 
     #endregion
     #region DataEvents
+    /// Data events are used to notify Intercom of changes to your data.
+
+    
+    [HttpPost("submit-data-event")]
+    public async Task<IActionResult> SubmitDataEvent(
+    [FromBody] DataEventSubmitRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.SubmitDataEvent(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("list-all-data-events")]
+    public async Task<IActionResult> ListAllDataEvents(
+    [FromQuery] DataEventListRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var response = await _intercomService.ListAllDataEvents(request, cancellationToken);
+        return Ok(response);
+    }
 
     #endregion
 }

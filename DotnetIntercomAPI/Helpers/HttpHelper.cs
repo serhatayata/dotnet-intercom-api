@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Web;
 using DotnetIntercomAPI.Extensions;
 using Newtonsoft.Json;
@@ -31,10 +32,16 @@ public static class HttpHelper
                 {
                     string key = p.Name.ToSnakeCase();
 
+                    var type = p.PropertyType;
+                    var value = p.GetValue(obj)?.ToString();
+
+                    if (type == typeof(bool))
+                        value = value?.ToLower();
+
                     return new
                     {
-                        Key = HttpUtility.UrlEncode(key),  // URL encode the key
-                        Value = HttpUtility.UrlEncode(p.GetValue(obj)?.ToString())  // URL encode the value
+                        Key = key,
+                        Value = value
                     };
                 });
 
