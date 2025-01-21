@@ -1,4 +1,6 @@
-﻿namespace DotnetIntercomAPI.Models.Contacts;
+﻿using DotnetIntercomAPI.Models.BaseModels;
+
+namespace DotnetIntercomAPI.Models.Contacts;
 
 public class ContactModel
 {

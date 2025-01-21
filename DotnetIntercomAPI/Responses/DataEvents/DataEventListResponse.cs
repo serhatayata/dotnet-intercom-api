@@ -1,4 +1,4 @@
-﻿using DotnetIntercomAPI.Models;
+﻿using DotnetIntercomAPI.Models.BaseModels;
 using DotnetIntercomAPI.Models.DataEvents;
 
 namespace DotnetIntercomAPI.Responses.DataEvents;

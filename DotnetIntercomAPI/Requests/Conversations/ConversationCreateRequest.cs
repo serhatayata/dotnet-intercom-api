@@ -1,4 +1,4 @@
-﻿using DotnetIntercomAPI.Models;
+﻿using DotnetIntercomAPI.Models.BaseModels;
 
 namespace DotnetIntercomAPI.Requests.Conversations;
 

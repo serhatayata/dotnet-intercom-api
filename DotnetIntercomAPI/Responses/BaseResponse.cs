@@ -1,4 +1,4 @@
-﻿using DotnetIntercomAPI.Models;
+﻿using DotnetIntercomAPI.Models.BaseModels;
 using Newtonsoft.Json;
 
 namespace DotnetIntercomAPI.Responses;

@@ -1,5 +1,5 @@
 ﻿using DotnetIntercomAPI.Attributes;
-using DotnetIntercomAPI.Models;
+using DotnetIntercomAPI.Models.BaseModels;
 using DotnetIntercomAPI.Services.Abstract;
 using DotnetIntercomAPI.Services.Concrete;
 

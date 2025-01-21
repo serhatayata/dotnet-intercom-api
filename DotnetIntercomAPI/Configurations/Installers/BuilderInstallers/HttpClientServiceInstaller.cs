@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using DotnetIntercomAPI.Attributes;
-using DotnetIntercomAPI.Models;
+using DotnetIntercomAPI.Models.BaseModels;
 
 namespace DotnetIntercomAPI.Configurations.Installers.BuilderInstallers;
 

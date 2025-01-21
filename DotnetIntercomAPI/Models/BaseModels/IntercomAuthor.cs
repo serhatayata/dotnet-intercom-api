@@ -1,4 +1,4 @@
-﻿namespace DotnetIntercomAPI.Models;
+﻿namespace DotnetIntercomAPI.Models.BaseModels;
 
 /// <summary>
 /// The object who initiated the conversation, which can be a Contact, Admin or Team. 

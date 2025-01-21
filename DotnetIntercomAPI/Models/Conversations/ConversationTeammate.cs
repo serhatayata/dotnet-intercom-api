@@ -1,4 +1,6 @@
-﻿namespace DotnetIntercomAPI.Models.Conversations;
+﻿using DotnetIntercomAPI.Models.BaseModels;
+
+namespace DotnetIntercomAPI.Models.Conversations;
 
 public class ConversationTeammate
 {

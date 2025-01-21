@@ -1,4 +1,4 @@
-﻿namespace DotnetIntercomAPI.Models;
+﻿namespace DotnetIntercomAPI.Models.BaseModels;
 
 public class ContentSourceList
 {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DotnetIntercomAPI.Models.BaseModels;
+using Newtonsoft.Json;
 
 namespace DotnetIntercomAPI.Models.Admins;
 

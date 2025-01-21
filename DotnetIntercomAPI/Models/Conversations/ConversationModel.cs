@@ -1,4 +1,5 @@
-﻿using DotnetIntercomAPI.Models.Tags;
+﻿using DotnetIntercomAPI.Models.BaseModels;
+using DotnetIntercomAPI.Models.Tags;
 
 namespace DotnetIntercomAPI.Models.Conversations;
 
