@@ -3,6 +3,7 @@ using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
+using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -253,6 +254,18 @@ public class IntercomController : ControllerBase
     CancellationToken cancellationToken = default)
     {
         var response = await _intercomService.ListAllDataEvents(request, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region Messages
+
+    [HttpPost("create-message")]
+    public async Task<IActionResult> CreateMessage(
+    [FromBody] MessageCreateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.CreateMessage(request, cancellationToken);
         return Ok(response);
     }
 

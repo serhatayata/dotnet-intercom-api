@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Web;
 using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
@@ -7,12 +6,14 @@ using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
+using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Responses.Conversations;
 using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.DataEvents;
+using DotnetIntercomAPI.Responses.Messages;
 using DotnetIntercomAPI.Responses.Tags;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
@@ -636,6 +637,36 @@ public class IntercomService : IIntercomService
     }
 
     #endregion
+    #region Messages
+
+    // Message are how you reach out to contacts in Intercom.
+    // They are created when an admin sends an outbound message to a contact.
+
+    /// <summary>
+    /// You can create a message that has been initiated by an admin. The conversation can be either an in-app message or an email.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="MessageCreateResponse"/></returns>
+    public async Task<MessageCreateResponse> CreateMessage(
+    MessageCreateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<MessageCreateRequest, MessageCreateResponse>(endpoint: "messages",
+                                                                                data: model,
+                                                                                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        } 
+    }
+
+    #endregion
+
 
     #region Private Methods
     private async Task<R> GetAsync<R>(

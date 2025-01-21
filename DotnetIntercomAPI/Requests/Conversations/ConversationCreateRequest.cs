@@ -1,9 +1,9 @@
-﻿using DotnetIntercomAPI.Models.Conversations;
+﻿using DotnetIntercomAPI.Models;
 
 namespace DotnetIntercomAPI.Requests.Conversations;
 
 public class ConversationCreateRequest
 {
-    public ConversationFrom From { get; set; }
+    public IntercomFrom From { get; set; }
     public string Body { get; set; }
 }

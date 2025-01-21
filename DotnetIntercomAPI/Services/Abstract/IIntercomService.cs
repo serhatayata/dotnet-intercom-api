@@ -3,12 +3,14 @@ using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
+using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
 using DotnetIntercomAPI.Responses.Conversations;
 using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.DataEvents;
+using DotnetIntercomAPI.Responses.Messages;
 using DotnetIntercomAPI.Responses.Tags;
 
 namespace DotnetIntercomAPI.Services.Abstract;
@@ -49,5 +51,8 @@ public interface IIntercomService
     #region DataEvents
     Task<bool> SubmitDataEvent(DataEventSubmitRequest model, CancellationToken cancellationToken = default);
     Task<DataEventListResponse> ListAllDataEvents(DataEventListRequest model, CancellationToken cancellationToken = default);
+    #endregion
+    #region Messages
+    Task<MessageCreateResponse> CreateMessage(MessageCreateRequest model, CancellationToken cancellationToken = default);
     #endregion
 }
