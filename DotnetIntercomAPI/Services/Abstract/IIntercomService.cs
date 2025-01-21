@@ -4,6 +4,7 @@ using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
+using DotnetIntercomAPI.Requests.Segments;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -11,6 +12,7 @@ using DotnetIntercomAPI.Responses.Conversations;
 using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Messages;
+using DotnetIntercomAPI.Responses.Segments;
 using DotnetIntercomAPI.Responses.Tags;
 
 namespace DotnetIntercomAPI.Services.Abstract;
@@ -54,5 +56,10 @@ public interface IIntercomService
     #endregion
     #region Messages
     Task<MessageCreateResponse> CreateMessage(MessageCreateRequest model, CancellationToken cancellationToken = default);
+    #endregion
+    #region Segments
+    Task<SegmentListContactResponse> ListContactAttachedSegments(string id, CancellationToken cancellationToken = default);
+    Task<SegmentListResponse> ListAllSegments(SegmentListRequest model, CancellationToken cancellationToken = default);
+    Task<SegmentResponse> RetrieveSegment(string id, CancellationToken cancellationToken = default);
     #endregion
 }

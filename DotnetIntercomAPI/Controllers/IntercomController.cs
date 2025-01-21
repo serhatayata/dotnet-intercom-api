@@ -1,9 +1,11 @@
-﻿using DotnetIntercomAPI.Requests;
+﻿using System.Threading;
+using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
+using DotnetIntercomAPI.Requests.Segments;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -266,6 +268,36 @@ public class IntercomController : ControllerBase
     CancellationToken cancellationToken)
     {
         var response = await _intercomService.CreateMessage(request, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region Segments
+
+    [HttpGet("list-contact-attached-segments/{id}")]
+    public async Task<IActionResult> ListContactAttachedSegments(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ListContactAttachedSegments(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("list-all-segments")]
+    public async Task<IActionResult> ListAllSegments(
+    [FromQuery] SegmentListRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ListAllSegments(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("retrieve-segment/{id}")]
+    public async Task<IActionResult> RetrieveSegment(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RetrieveSegment(id, cancellationToken);
         return Ok(response);
     }
 

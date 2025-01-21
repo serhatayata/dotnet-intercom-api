@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
@@ -7,6 +8,7 @@ using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
+using DotnetIntercomAPI.Requests.Segments;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -14,6 +16,7 @@ using DotnetIntercomAPI.Responses.Conversations;
 using DotnetIntercomAPI.Responses.DataAttributes;
 using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Messages;
+using DotnetIntercomAPI.Responses.Segments;
 using DotnetIntercomAPI.Responses.Tags;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
@@ -666,7 +669,82 @@ public class IntercomService : IIntercomService
     }
 
     #endregion
+    #region Segments
 
+    // A segment is a group of your contacts defined by the rules that you set.
+
+    /// <summary>
+    /// You can fetch a list of segments that are associated to a contact.
+    /// </summary>
+    /// <param name="id">id of contact</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="SegmentListContactResponse"/></returns>
+    public async Task<SegmentListContactResponse> ListContactAttachedSegments(
+    string id,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<SegmentListContactResponse>(endpoint: $"contacts/{id}/segments",
+                                                      parameters: null,
+                                                      cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can fetch a list of all segments.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="SegmentListResponse"/></returns>
+    public async Task<SegmentListResponse> ListAllSegments(
+    SegmentListRequest model,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var parameters = HttpHelper.ToSnakeCaseQueryStringAsDictionary(model);
+
+            return await GetAsync<SegmentListResponse>(endpoint: $"segments",
+                                                       parameters: parameters,
+                                                       cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can fetch the details of a single segment.
+    /// </summary>
+    /// <param name="id">id of segment</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="SegmentResponse"/></returns>
+    public async Task<SegmentResponse> RetrieveSegment(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<SegmentResponse>(endpoint: $"segments/{id}",
+                                                   parameters: null,
+                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    #endregion
 
     #region Private Methods
     private async Task<R> GetAsync<R>(
@@ -677,7 +755,6 @@ public class IntercomService : IIntercomService
         endpoint = await GetQueryStringUrl(parameters, endpoint);
 
         var response = await _httpClient.GetAsync(endpoint, cancellationToken);
-        response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         var result = Deserialize<R>(responseString);
@@ -696,7 +773,6 @@ public class IntercomService : IIntercomService
         var content = new StringContent(dataStr, Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PostAsync(endpoint, content, cancellationToken);
-        response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         var result = Deserialize<R>(responseString);
@@ -715,7 +791,6 @@ public class IntercomService : IIntercomService
         var content = new StringContent(dataStr, Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PutAsync(endpoint, content, cancellationToken);
-        response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         var result = Deserialize<R>(responseString);
@@ -731,7 +806,6 @@ public class IntercomService : IIntercomService
         endpoint = await GetQueryStringUrl(parameters, endpoint);
 
         var response = await _httpClient.DeleteAsync(endpoint, cancellationToken);
-        response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         var result = Deserialize<R>(responseString);
