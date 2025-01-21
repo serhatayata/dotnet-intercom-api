@@ -1,10 +1,13 @@
 ﻿using DotnetIntercomAPI.Requests;
+using DotnetIntercomAPI.Requests.Companies;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Requests.Segments;
+using DotnetIntercomAPI.Requests.Tags;
+using DotnetIntercomAPI.Requests.Tickets;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -28,6 +31,7 @@ public interface IIntercomService
     #endregion
     #region Companies
     Task<CompanyListResponse> ListAllCompanies(PagesRequest request, CancellationToken cancellationToken = default);
+    Task<TagResponse> TagCompany(CompanyTagRequest model, CancellationToken cancellationToken = default);
     #endregion
     #region Contacts
     Task<ContactResponse> GetContact(string id, CancellationToken cancellationToken = default);
@@ -35,6 +39,9 @@ public interface IIntercomService
     Task<ContactListResponse> ListAllContacts(PagesRequest request, CancellationToken cancellationToken = default);
     Task<ContactCreateOrUpdateResponse> CreateOrUpdateContact(string id, ContactCreateOrUpdateRequest model, CancellationToken cancellationToken = default);
     Task<ContactDeleteResponse> DeleteContact(string id, CancellationToken cancellationToken = default);
+    Task<TagResponse> AddTagToContact(string id, ContactAddTagRequest model, CancellationToken cancellationToken = default);
+    Task<TagResponse> RemoveTagFromContact(string contactId, string id, CancellationToken cancellationToken = default);
+    Task<TagResponse> ContactTag(ContactTagRequest model, CancellationToken cancellationToken = default);
     #endregion
     #region Conversations
     Task<TagAddResponse> AddTagToConversation(string conversationId, ConversationAddTagRequest request, CancellationToken cancellationToken);
@@ -61,5 +68,17 @@ public interface IIntercomService
     Task<SegmentListContactResponse> ListContactAttachedSegments(string id, CancellationToken cancellationToken = default);
     Task<SegmentListResponse> ListAllSegments(SegmentListRequest model, CancellationToken cancellationToken = default);
     Task<SegmentResponse> RetrieveSegment(string id, CancellationToken cancellationToken = default);
+    #endregion
+    #region Tags
+    Task<TagListResponse> ListContactTags(string id, CancellationToken cancellationToken = default);
+    Task<TagListResponse> ListAllTags(CancellationToken cancellationToken = default);
+    Task<TagResponse> CreateTag(TagCreateRequest model, CancellationToken cancellationToken = default);
+    Task<TagResponse> UpdateTag(TagUpdateRequest model, CancellationToken cancellationToken = default);
+    Task<TagResponse> RetrieveTag(string id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteTag(string id, CancellationToken cancellationToken = default);
+    #endregion
+    #region Tickets
+    Task<TagResponse> AddTagToTicket(string id, TicketAddTagRequest model, CancellationToken cancellationToken = default);
+    Task<TagResponse> RemoveTagFromTicket(string ticketId, string tagId, TicketRemoveTagRequest model, CancellationToken cancellationToken = default);
     #endregion
 }

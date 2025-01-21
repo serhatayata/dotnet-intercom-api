@@ -3,12 +3,15 @@ using System.Text;
 using DotnetIntercomAPI.Helpers;
 using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Admins;
+using DotnetIntercomAPI.Requests.Companies;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Requests.Segments;
+using DotnetIntercomAPI.Requests.Tags;
+using DotnetIntercomAPI.Requests.Tickets;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -189,6 +192,29 @@ public class IntercomService : IIntercomService
             return null;
         }
     }
+
+    /// <summary>
+    /// You can tag single company or a list of companies. You can tag a company by passing in the tag name and the company details
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
+    public async Task<TagResponse> TagCompany(
+    CompanyTagRequest model,
+    CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await PostAsync<CompanyTagRequest, TagResponse>(endpoint: $"tags",
+                                                                   data: model,
+                                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
     #endregion
     #region Contacts
 
@@ -307,6 +333,66 @@ public class IntercomService : IIntercomService
             return await DeleteAsync<ContactDeleteResponse>(endpoint: $"contacts/{id}", 
                                                             parameters: null, 
                                                             cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can tag a specific contact. This will return a tag object for the tag that was added to the contact.
+    /// </summary>
+    /// <param name="id">contact id</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
+    public async Task<TagResponse> AddTagToContact(
+    string id,
+    ContactAddTagRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TagResponse>(endpoint: $"contacts/{id}/tags",
+                                               parameters: null,
+                                               cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TagResponse> RemoveTagFromContact(
+    string contactId,
+    string id,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await DeleteAsync<TagResponse>(endpoint: $"contacts/{contactId}/tags/{id}",
+                                                  parameters: null,
+                                                  cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TagResponse> ContactTag(
+    ContactTagRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<ContactTagRequest, TagResponse>(endpoint: $"tags",
+                                                                   data: model,
+                                                                   cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
@@ -745,6 +831,177 @@ public class IntercomService : IIntercomService
     }
 
     #endregion
+    #region Tags
+    // A tag allows you to label your contacts, companies, and conversations and list them using that tag.
+
+    /// <summary>
+    /// You can fetch a list of all tags that are attached to a specific contact.
+    /// </summary>
+    /// <param name="id">contact id</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagListResponse"/></returns>
+    public async Task<TagListResponse> ListContactTags(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TagListResponse>(endpoint: $"contacts/{id}/tags",
+                                                   parameters: null,
+                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can fetch a list of all tags for a given workspace.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<TagListResponse> ListAllTags(
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TagListResponse>(endpoint: $"tags",
+                                                   parameters: null,
+                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can create a new tag by passing in the tag name as specified
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
+    public async Task<TagResponse> CreateTag(
+    TagCreateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TagCreateRequest, TagResponse>(endpoint: $"tags",
+                                                                  data: model,
+                                                                  cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can update an existing tag by passing the id of the tag as 
+    /// specified in "Create or Update Tag Request Payload" described below.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
+    public async Task<TagResponse> UpdateTag(
+    TagUpdateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TagUpdateRequest, TagResponse>(endpoint: $"tags",
+                                                                  data: model,
+                                                                  cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TagResponse> RetrieveTag(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TagResponse>(endpoint: $"tags/{id}",
+                                               parameters: null,
+                                               cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteTag(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await DeleteAsync<object>(endpoint: $"tags/{id}",
+                                                     parameters: null,
+                                                     cancellationToken: cancellationToken);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return false;
+        }
+    }
+
+    #endregion
+    #region Tickets
+    public async Task<TagResponse> AddTagToTicket(
+    string id, 
+    TicketAddTagRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TicketAddTagRequest, TagResponse>(endpoint: $"tickets/{id}/tags",
+                                                                     data: model,
+                                                                     cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TagResponse> RemoveTagFromTicket(
+    string ticketId, 
+    string tagId, 
+    TicketRemoveTagRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await DeleteAsync<TagResponse>(endpoint: $"tickets/{ticketId}/tags/{tagId}",
+                                                  parameters: null,
+                                                  cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    #endregion
+
 
     #region Private Methods
     private async Task<R> GetAsync<R>(
@@ -806,6 +1063,7 @@ public class IntercomService : IIntercomService
         endpoint = await GetQueryStringUrl(parameters, endpoint);
 
         var response = await _httpClient.DeleteAsync(endpoint, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         var result = Deserialize<R>(responseString);

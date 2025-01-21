@@ -1,11 +1,14 @@
 ﻿using System.Threading;
 using DotnetIntercomAPI.Requests;
+using DotnetIntercomAPI.Requests.Companies;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
 using DotnetIntercomAPI.Requests.DataAttributes;
 using DotnetIntercomAPI.Requests.DataEvents;
 using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Requests.Segments;
+using DotnetIntercomAPI.Requests.Tags;
+using DotnetIntercomAPI.Requests.Tickets;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,6 +87,15 @@ public class IntercomController : ControllerBase
         var response = await _intercomService.ListAllCompanies(request, cancellationToken);
         return Ok(response);
     }
+
+    [HttpPost("tag-company")]
+    public async Task<IActionResult> TagCompanies(
+    [FromBody] CompanyTagRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.TagCompany(request, cancellationToken);
+        return Ok(response);
+    }
     #endregion
     #region Contacts
     // Contact are the objects that represent your leads and users in Intercom.
@@ -134,6 +146,36 @@ public class IntercomController : ControllerBase
         var response = await _intercomService.DeleteContact(id, cancellationToken);
         return Ok(response);
     }
+
+    [HttpPost("add-tag-to-contact/{id}")]
+    public async Task<IActionResult> AddTagToContact(
+    string id,
+    [FromBody] ContactAddTagRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.AddTagToContact(id, request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("remove-tag-from-contact/{contactId}/{id}")]
+    public async Task<IActionResult> RemoveTagFromContact(
+    string contactId,
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RemoveTagFromContact(contactId, id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("tag-contact")]
+    public async Task<IActionResult> TagContact(
+    [FromBody] ContactTagRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ContactTag(request, cancellationToken);
+        return Ok(response);
+    }
+
     #endregion
     #region Conversations
     // Conversations are how you can communicate with users in Intercom.
@@ -298,6 +340,86 @@ public class IntercomController : ControllerBase
     CancellationToken cancellationToken)
     {
         var response = await _intercomService.RetrieveSegment(id, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region Tags
+
+    [HttpGet("list-contact-tags")]
+    public async Task<IActionResult> ListContactTags(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ListContactTags(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("list-all-tags")]
+    public async Task<IActionResult> ListAllTags(
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ListAllTags(cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("create-tag")]
+    public async Task<IActionResult> CreateTag(
+    [FromBody] TagCreateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.CreateTag(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("update-tag")]
+    public async Task<IActionResult> UpdateTag(
+    [FromBody] TagUpdateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.UpdateTag(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("retrieve-tag/{id}")]
+    public async Task<IActionResult> RetrieveTag(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RetrieveTag(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("delete-tag/{id}")]
+    public async Task<IActionResult> DeleteTag(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.DeleteTag(id, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region Tickets
+
+    [HttpPost("add-tag-to-ticket/{id}")]
+    public async Task<IActionResult> AddTagToTicket(
+    string id,
+    [FromBody] TicketAddTagRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.AddTagToTicket(id, request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("remove-tag-from-ticket/{ticketId}/{tagId}")]
+    public async Task<IActionResult> RemoveTagFromTicket(
+    string ticketId,
+    string tagId,
+    [FromBody] TicketRemoveTagRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RemoveTagFromTicket(ticketId, tagId, request, cancellationToken);
         return Ok(response);
     }
 
