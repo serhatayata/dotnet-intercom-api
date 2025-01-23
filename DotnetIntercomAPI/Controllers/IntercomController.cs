@@ -462,5 +462,43 @@ public class IntercomController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("create-ticket")]
+    public async Task<IActionResult> CreateTicket(
+    [FromBody] TicketCreateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.CreateTicket(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPut("update-ticket/{id}")]
+    public async Task<IActionResult> UpdateTicket(
+    string id,
+    [FromBody] TicketUpdateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.UpdateTicket(id, request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPut("reply-to-ticket/{id}")]
+    public async Task<IActionResult> ReplyToTicket(
+    string id,
+    [FromBody] TicketReplyRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ReplyToTicket(id, request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("retrieve-ticket/{id}")]
+    public async Task<IActionResult> RetrieveTicket(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RetrieveTicket(id, cancellationToken);
+        return Ok(response);
+    }
+
     #endregion
 }

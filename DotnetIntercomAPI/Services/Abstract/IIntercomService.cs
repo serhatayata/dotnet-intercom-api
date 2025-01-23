@@ -18,6 +18,7 @@ using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Messages;
 using DotnetIntercomAPI.Responses.Segments;
 using DotnetIntercomAPI.Responses.Tags;
+using DotnetIntercomAPI.Responses.Tickets;
 using DotnetIntercomAPI.Responses.TicketTypes;
 
 namespace DotnetIntercomAPI.Services.Abstract;
@@ -82,6 +83,12 @@ public interface IIntercomService
     #region Tickets
     Task<TagResponse> AddTagToTicket(string id, TicketAddTagRequest model, CancellationToken cancellationToken = default);
     Task<TagResponse> RemoveTagFromTicket(string ticketId, string tagId, TicketRemoveTagRequest model, CancellationToken cancellationToken = default);
+    Task<TicketResponse> CreateTicket(TicketCreateRequest model, CancellationToken cancellationToken = default);
+    Task<TicketResponse> UpdateTicket(string id, TicketUpdateRequest model, CancellationToken cancellationToken = default);
+    Task<TicketReplyResponse> ReplyToTicket(string id, TicketReplyRequest model, CancellationToken cancellationToken = default);
+    Task<TicketResponse> RetrieveTicket(string id, CancellationToken cancellationToken = default);
+    #endregion
+    #region TicketTypes
     Task<TicketTypeListResponse> ListAllTicketTypes(CancellationToken cancellationToken = default);
     Task<TicketTypeResponse> CreateTicketType(TicketTypeCreateRequest model, CancellationToken cancellationToken = default);
     Task<TicketTypeResponse> RetrieveTicketType(string id, CancellationToken cancellationToken = default);

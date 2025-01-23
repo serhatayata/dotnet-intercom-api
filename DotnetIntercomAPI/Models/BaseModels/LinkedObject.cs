@@ -1,6 +1,6 @@
-﻿namespace DotnetIntercomAPI.Models.Conversations;
+﻿namespace DotnetIntercomAPI.Models.BaseModels;
 
-public class ConversationLinkedObject
+public class LinkedObject
 {
     public string Type { get; set; }
     public string Id { get; set; }

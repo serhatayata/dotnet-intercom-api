@@ -22,6 +22,7 @@ using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Messages;
 using DotnetIntercomAPI.Responses.Segments;
 using DotnetIntercomAPI.Responses.Tags;
+using DotnetIntercomAPI.Responses.Tickets;
 using DotnetIntercomAPI.Responses.TicketTypes;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
@@ -965,6 +966,15 @@ public class IntercomService : IIntercomService
 
     #endregion
     #region Tickets
+    // Tickets are how you track requests from your users.
+
+    /// <summary>
+    /// You can tag a specific ticket. This will return a tag object for the tag that was added to the ticket.
+    /// </summary>
+    /// <param name="id">ticket id</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
     public async Task<TagResponse> AddTagToTicket(
     string id, 
     TicketAddTagRequest model, 
@@ -983,6 +993,14 @@ public class IntercomService : IIntercomService
         }
     }
 
+    /// <summary>
+    /// You can remove tag from a specific ticket. This will return a tag object for the tag that was removed from the ticket.
+    /// </summary>
+    /// <param name="ticketId">ticket Id</param>
+    /// <param name="tagId">tag Id</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TagResponse"/></returns>
     public async Task<TagResponse> RemoveTagFromTicket(
     string ticketId, 
     string tagId, 
@@ -1002,6 +1020,111 @@ public class IntercomService : IIntercomService
         }
     }
 
+    /// <summary>
+    /// You can create a new ticket.
+    /// </summary>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketResponse"/></returns>
+    public async Task<TicketResponse> CreateTicket(
+    TicketCreateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TicketCreateRequest, TicketResponse>(endpoint: "tickets",
+                                                                        data: model,
+                                                                        cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can update a ticket.
+    /// </summary>
+    /// <param name="id">id of ticket</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketResponse"/></returns>
+    public async Task<TicketResponse> UpdateTicket(
+    string id, 
+    TicketUpdateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PutAsync<TicketUpdateRequest, TicketResponse>(endpoint: $"tickets/{id}",
+                                                                       data: model,
+                                                                       cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can reply to a ticket with a message from an admin or on behalf of a contact, or with a note for admins.
+    /// </summary>
+    /// <param name="id">id of ticket</param>
+    /// <param name="model">request model</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketReplyResponse"/></returns>
+    public async Task<TicketReplyResponse> ReplyToTicket(
+    string id,
+    TicketReplyRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TicketReplyRequest, TicketReplyResponse>(endpoint: $"tickets/{id}/reply",
+                                                                            data: model,
+                                                                            cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// You can fetch the details of a single ticket.
+    /// </summary>
+    /// <param name="id">id of the ticket</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketResponse"/></returns>
+    public async Task<TicketResponse> RetrieveTicket(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TicketResponse>(endpoint: $"tickets/{id}",
+                                                  parameters: null,
+                                                  cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    #endregion
+    #region TicketTypes
+    // Everything about your ticket types
+
+    /// <summary>
+    /// You can get a list of all ticket types for a workspace.
+    /// </summary>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketTypeListResponse"/></returns>
     public async Task<TicketTypeListResponse> ListAllTicketTypes(
     CancellationToken cancellationToken = default)
     {
@@ -1018,6 +1141,13 @@ public class IntercomService : IIntercomService
         }
     }
 
+    /// <summary>
+    /// You can create a new ticket type.
+    /// Every ticket type will be created with two default attributes: default_title and default_description
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<TicketTypeResponse> CreateTicketType(
     TicketTypeCreateRequest model, 
     CancellationToken cancellationToken = default)
@@ -1035,6 +1165,12 @@ public class IntercomService : IIntercomService
         }
     }
 
+    /// <summary>
+    /// You can fetch the details of a single ticket type.
+    /// </summary>
+    /// <param name="id">ticket type id</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns><see cref="TicketTypeResponse"/></returns>
     public async Task<TicketTypeResponse> RetrieveTicketType(
     string id, 
     CancellationToken cancellationToken = default)
@@ -1052,6 +1188,13 @@ public class IntercomService : IIntercomService
         }
     }
 
+    /// <summary>
+    /// You can update a ticket type. 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="model"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<TicketTypeResponse> UpdateTicketType(
     string id,
     TicketTypeUpdateRequest model, 
