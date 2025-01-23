@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using DotnetIntercomAPI.Requests;
+﻿using DotnetIntercomAPI.Requests;
 using DotnetIntercomAPI.Requests.Companies;
 using DotnetIntercomAPI.Requests.Contacts;
 using DotnetIntercomAPI.Requests.Conversations;
@@ -9,6 +8,7 @@ using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Requests.Segments;
 using DotnetIntercomAPI.Requests.Tags;
 using DotnetIntercomAPI.Requests.Tickets;
+using DotnetIntercomAPI.Requests.TicketTypes;
 using DotnetIntercomAPI.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -396,6 +396,45 @@ public class IntercomController : ControllerBase
     CancellationToken cancellationToken)
     {
         var response = await _intercomService.DeleteTag(id, cancellationToken);
+        return Ok(response);
+    }
+
+    #endregion
+    #region TicketTypes
+
+    [HttpGet("list-all-ticket-types")]
+    public async Task<IActionResult> ListAllTicketTypes(
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.ListAllTicketTypes(cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("create-ticket-type")]
+    public async Task<IActionResult> CreateTicketType(
+    [FromBody] TicketTypeCreateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.CreateTicketType(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("retrieve-ticket-type/{id}")]
+    public async Task<IActionResult> RetrieveTicketType(
+    string id,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.RetrieveTicketType(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPut("update-ticket-type/{id}")]
+    public async Task<IActionResult> UpdateTicketType(
+    string id,
+    [FromBody] TicketTypeUpdateRequest request,
+    CancellationToken cancellationToken)
+    {
+        var response = await _intercomService.UpdateTicketType(id, request, cancellationToken);
         return Ok(response);
     }
 

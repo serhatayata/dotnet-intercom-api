@@ -12,6 +12,7 @@ using DotnetIntercomAPI.Requests.Messages;
 using DotnetIntercomAPI.Requests.Segments;
 using DotnetIntercomAPI.Requests.Tags;
 using DotnetIntercomAPI.Requests.Tickets;
+using DotnetIntercomAPI.Requests.TicketTypes;
 using DotnetIntercomAPI.Responses.Admins;
 using DotnetIntercomAPI.Responses.Companies;
 using DotnetIntercomAPI.Responses.Contacts;
@@ -21,6 +22,7 @@ using DotnetIntercomAPI.Responses.DataEvents;
 using DotnetIntercomAPI.Responses.Messages;
 using DotnetIntercomAPI.Responses.Segments;
 using DotnetIntercomAPI.Responses.Tags;
+using DotnetIntercomAPI.Responses.TicketTypes;
 using DotnetIntercomAPI.Services.Abstract;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -992,6 +994,74 @@ public class IntercomService : IIntercomService
             return await DeleteAsync<TagResponse>(endpoint: $"tickets/{ticketId}/tags/{tagId}",
                                                   parameters: null,
                                                   cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TicketTypeListResponse> ListAllTicketTypes(
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TicketTypeListResponse>(endpoint: "ticket_types",
+                                                          parameters: null,
+                                                          cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TicketTypeResponse> CreateTicketType(
+    TicketTypeCreateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PostAsync<TicketTypeCreateRequest, TicketTypeResponse>(endpoint: "ticket_types",
+                                                                                data: model,
+                                                                                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TicketTypeResponse> RetrieveTicketType(
+    string id, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync<TicketTypeResponse>(endpoint: $"ticket_types/{id}",
+                                                      parameters: null,
+                                                      cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured on IntercomService", ex);
+            return null;
+        }
+    }
+
+    public async Task<TicketTypeResponse> UpdateTicketType(
+    string id,
+    TicketTypeUpdateRequest model, 
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await PutAsync<TicketTypeUpdateRequest,TicketTypeResponse>(endpoint: $"ticket_types/{id}",
+                                                                              data: model,
+                                                                              cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
